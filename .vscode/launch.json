@@ -17,6 +17,14 @@
       "name": "Current File",
       "request": "launch",
       "mainClass": "${file}"
+    },
+    {
+      "type": "java",
+      "name": "Attach Maven on svqk-backend",
+      "request": "attach",
+      "hostName": "localhost",
+      "port": 8000,
+      "projectName": "svqk-backend"
     }
   ]
 }

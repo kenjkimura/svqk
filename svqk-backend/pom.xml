@@ -189,6 +189,8 @@
         <artifactId>maven-compiler-plugin</artifactId>
         <version>${compiler-plugin.version}</version>
         <configuration>
+          <debug>true</debug>
+          <debuglevel>lines,vars,source</debuglevel>
           <compilerArgs>
             <arg>-parameters</arg>
           </compilerArgs>
