@@ -56,33 +56,4 @@ public class PathParamOrderFilter implements OASFilter {
   private Optional<Parameter> findParamBy(String paramName, List<Parameter> pathParams) {
     return pathParams.stream().filter(param -> param.getName().equals(paramName)).findFirst();
   }
-
-  private List<Parameter> resortParamsBk(List<Parameter> params, List<String> pathParamNames) {
-    return pathParamNames.stream()
-        .reduce(
-            new ArrayList<Parameter>(),
-            (result, paramName) -> {
-              var oneParam =
-                  params.stream().filter(param -> param.getName().equals(paramName)).findFirst();
-              result.add(oneParam.get());
-              return result;
-            },
-            (left, right) -> {
-              left.addAll(right);
-              return left;
-            });
-  }
-
-  private List<Parameter> reorderBk(List<Parameter> params, List<String> pathParamNames) {
-    Map<String, Integer> indexMap = new HashMap<>();
-    for (int i = 0; i < pathParamNames.size(); i++) {
-      indexMap.put(pathParamNames.get(i), i);
-    }
-
-    return params.stream()
-        .sorted(
-            Comparator.comparingInt(
-                param -> indexMap.getOrDefault(param.getName(), Integer.MAX_VALUE)))
-        .toList();
-  }
 }
