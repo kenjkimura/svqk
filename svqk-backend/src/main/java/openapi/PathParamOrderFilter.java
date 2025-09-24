@@ -18,45 +18,39 @@ public class PathParamOrderFilter implements OASFilter {
   public void filterOpenAPI(OpenAPI openAPI) {
     if (openAPI == null || openAPI.getPaths() == null) return;
 
-    openAPI.getPaths().getPathItems().entrySet().stream()
-        .filter(this::hasMultiplePathVariables)
-        .forEach(this::reorderPathParameters);
-  }
-
-  private boolean hasMultiplePathVariables(Map.Entry<String, PathItem> entry) {
-    return extractPathVariables(entry.getKey()).size() >= 2;
+    openAPI.getPaths().getPathItems().entrySet().stream().forEach(this::reorderPathParameters);
   }
 
   private void reorderPathParameters(Map.Entry<String, PathItem> entry) {
-    String path = entry.getKey();
-    PathItem pathItem = entry.getValue();
-    List<String> pathParamNames = extractPathVariables(path);
+    List<String> pathParamNames = extractPathParamNames(entry.getKey());
+    if (pathParamNames.size() < 2) {
+      return;
+    }
 
-    pathItem
+    entry
+        .getValue()
         .getOperations()
         .values()
         .forEach(
-            operation -> {
-              if (operation.getParameters() != null) {
-                operation.setParameters(reorder(operation.getParameters(), pathParamNames));
-              }
+            op -> {
+              List<Parameter> reordered = orderByPathParamNames(op.getParameters(), pathParamNames);
+              op.setParameters(reordered);
             });
   }
 
-  private List<String> extractPathVariables(String path) {
+  private List<String> extractPathParamNames(String path) {
     return PATH_VAR.matcher(path).results().map(match -> match.group(1)).toList();
   }
 
-  private List<Parameter> reorder(List<Parameter> params, List<String> pathParamNames) {
-    Map<String, Integer> indexMap = new HashMap<>();
-    for (int i = 0; i < pathParamNames.size(); i++) {
-      indexMap.put(pathParamNames.get(i), i);
-    }
-
-    return params.stream()
-        .sorted(
-            Comparator.comparingInt(
-                param -> indexMap.getOrDefault(param.getName(), Integer.MAX_VALUE)))
+  private List<Parameter> orderByPathParamNames(
+      List<Parameter> pathParams, List<String> pathParamNames) {
+    return pathParamNames.stream()
+        .map(name -> findParamBy(name, pathParams))
+        .flatMap(Optional::stream)
         .toList();
+  }
+
+  private Optional<Parameter> findParamBy(String paramName, List<Parameter> pathParams) {
+    return pathParams.stream().filter(param -> param.getName().equals(paramName)).findFirst();
   }
 }
