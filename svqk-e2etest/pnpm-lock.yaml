@@ -4,6 +4,11 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+patchedDependencies:
+  os-locale@6.0.2:
+    hash: 839eb1537d0fc35b6b382c1a87f5c9f2667283b97cfd721b020da24890a3ce72
+    path: patches/os-locale@6.0.2.patch
+
 importers:
 
   .:
@@ -46,7 +51,7 @@ importers:
         version: 16.4.0
       os-locale:
         specifier: ^6.0.2
-        version: 6.0.2
+        version: 6.0.2(patch_hash=839eb1537d0fc35b6b382c1a87f5c9f2667283b97cfd721b020da24890a3ce72)
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1459,7 +1464,7 @@ snapshots:
       type-check: 0.4.0
       word-wrap: 1.2.5
 
-  os-locale@6.0.2:
+  os-locale@6.0.2(patch_hash=839eb1537d0fc35b6b382c1a87f5c9f2667283b97cfd721b020da24890a3ce72):
     dependencies:
       lcid: 3.1.1
 

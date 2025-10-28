@@ -1,0 +1,28 @@
+diff --git a/index.js b/index.js
+index d231c6303f12b6dabf318160c5d65b7d32ac29c3..5d0373e061f8f7574f5f417f922f9e521f88b479 100644
+--- a/index.js
++++ b/index.js
+@@ -66,18 +66,14 @@ function getUnixLocaleSync() {
+ 	return getLocale(parseLocale(getStdOutSync('locale')));
+ }
+ 
+-async function getWinLocale() {
+-	const stdout = await getStdOut('wmic', ['os', 'get', 'locale']);
+-	const lcidCode = Number.parseInt(stdout.replace('Locale', ''), 16);
+-
+-	return lcid.from(lcidCode);
++function getWinLocale() {
++    const stdout = getStdOutSync('powershell', ['-NoProfile', '-Command', '(Get-WinSystemLocale).Name']);
++    return String(stdout).trim();
+ }
+ 
+ function getWinLocaleSync() {
+-	const stdout = getStdOutSync('wmic', ['os', 'get', 'locale']);
+-	const lcidCode = Number.parseInt(stdout.replace('Locale', ''), 16);
+-
+-	return lcid.from(lcidCode);
++    const stdout = getStdOutSync('powershell', ['-NoProfile', '-Command', '(Get-WinSystemLocale).Name']);
++    return String(stdout).trim();
+ }
+ 
+ function normalise(input) {
